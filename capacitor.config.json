@@ -1,0 +1,11 @@
+{
+  "appId": "com.ugo.mobile",
+  "appName": "UGo Mobile",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

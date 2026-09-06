@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>UGo Mobile</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 启动闪屏：LOGO + 标题 -->
+  <div id="splash">
+    <img id="splash-logo" src="assets/logo.png" alt="UGO logo">
+    <h1 id="splash-title">UGO Mobile</h1>
+    <p id="splash-sub">Unicoda 旗下围棋软件</p>
+  </div>
+
+  <!-- 主界面：棋盘 -->
+  <div id="app" class="hidden">
+    <header id="status-bar">
+      <span id="turn-stone" class="stone-icon black"></span>
+      <span id="turn-text">黑方行棋</span>
+      <span id="move-info">第 0 手</span>
+      <button id="btn-undo" class="top-btn">悔棋</button>
+      <button id="btn-influence" class="top-btn">形势</button>
+      <button id="btn-mode" class="top-btn">分析</button>
+      <button id="btn-pass-top" class="top-btn">虚着</button>
+      <button id="menu-tab" class="top-btn accent" aria-label="打开功能菜单">☰ 菜单</button>
+    </header>
+
+    <main id="board-wrap">
+      <canvas id="board"></canvas>
+    </main>
+
+    <!-- 形势估算条（开启势力显示时出现） -->
+    <div id="est-bar" class="hidden" aria-live="polite">
+      <span class="est-stone black"></span>
+      <span class="est-num" id="est-b">0</span>
+      <div class="est-track"><div id="est-fill"></div></div>
+      <span class="est-num" id="est-w">0</span>
+      <span class="est-stone white"></span>
+      <span id="est-lead">形势估算</span>
+    </div>
+
+    <!-- AI 信息播报（开启机器对手时显示） -->
+    <div id="ai-info" class="hidden" aria-live="polite"></div>
+
+    <!-- 分析模式工具条（位于棋盘下方，不遮挡盘面） -->
+    <div id="analysis-bar" class="hidden">
+      <span class="bar-label">摆放</span>
+      <div class="segmented" id="opt-place-color">
+        <button data-value="1">黑子</button>
+        <button data-value="2">白子</button>
+        <button data-value="alt">交替</button>
+        <button data-value="marker">记号</button>
+      </div>
+      <div class="an-nav">
+        <button id="an-back5" class="an-btn" title="退 5 手">⏪</button>
+        <button id="an-back1" class="an-btn" title="退 1 手">◀</button>
+        <button id="an-reset" class="an-btn" title="重置试下">↺</button>
+        <button id="an-fwd1" class="an-btn" title="下 1 手">▶</button>
+        <button id="an-fwd5" class="an-btn" title="下 5 手">⏩</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 功能菜单（底部抽屉） -->
+  <div id="menu-mask" class="hidden"></div>
+  <section id="menu-sheet" class="hidden" aria-label="功能菜单">
+    <div class="sheet-handle"></div>
+
+    <div class="menu-head">
+      <span class="menu-head-title">UGO 围棋</span>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-label">棋盘边缘标号</div>
+      <label class="switch">
+        <input type="checkbox" id="opt-labels" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-label">落子显示</div>
+      <div class="segmented" id="opt-move-display">
+        <button data-value="numbers" class="active">手数</button>
+        <button data-value="circle">圆圈标记</button>
+        <button data-value="off">关</button>
+      </div>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-label">棋盘路数</div>
+      <div class="segmented" id="opt-board-size">
+        <button data-value="9">9路</button>
+        <button data-value="13">13路</button>
+        <button data-value="19" class="active">19路</button>
+      </div>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-label">人机对弈</div>
+      <div class="segmented" id="opt-ai">
+        <button data-value="off" class="active">关</button>
+        <button data-value="1">AI执黑</button>
+        <button data-value="2">AI执白</button>
+      </div>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-label">机器强度<span class="menu-sub" id="ai-level-label">中级 · 5</span></div>
+      <input type="range" id="opt-ai-level" min="1" max="10" step="1" value="5" aria-label="机器强度">
+    </div>
+
+    <div class="menu-row wrap">
+      <div class="menu-label">行棋风格</div>
+      <div class="segmented" id="opt-ai-style">
+        <button data-value="balanced" class="active">均衡</button>
+        <button data-value="attack">激进</button>
+        <button data-value="defend">稳健</button>
+        <button data-value="territory">取地</button>
+        <button data-value="moyo">厚势</button>
+      </div>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-label">规则</div>
+      <div class="segmented" id="opt-rule">
+        <button data-value="0" class="active">中国规则</button>
+        <button data-value="1">日本规则</button>
+        <button data-value="2">韩国规则</button>
+      </div>
+    </div>
+
+    <div class="menu-actions">
+      <button id="btn-pass">虚着</button>
+      <button id="btn-resign">认输</button>
+      <button id="btn-new">新对局</button>
+    </div>
+  </section>
+
+  <!-- 结果 / 提示弹窗 -->
+  <div id="dialog-mask" class="hidden">
+    <div id="dialog">
+      <h2 id="dialog-title"></h2>
+      <div id="dialog-body"></div>
+      <button id="dialog-ok">好的</button>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
